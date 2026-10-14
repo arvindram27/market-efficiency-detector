@@ -5,3 +5,7 @@ vaderSentiment>=3.3.2
 
 # Optional: real intraday market data (free, no key). Pulls pandas.
 # Install for the live NSE/SGX path: pip install yfinance>=0.2.40
+
+# Optional: Streamlit PAL explorer demo (pulls pandas + altair).
+# Install for the web demo: pip install streamlit>=1.40
+# Run: streamlit run app.py

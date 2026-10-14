@@ -49,6 +49,23 @@ they differ only in how long the *residual* adjustment takes. `no_event` has a
 qualifying headline but no price move, so the trigger gate suppresses it — the
 "news without price confirmation" null case.
 
+## 🖥️ Streamlit demo (PAL explorer)
+
+An interactive web demo on the same `Pipeline` — no backend changes.
+
+```bash
+pip install -e ".[demo]"   # core + streamlit
+streamlit run app.py
+```
+
+Three views:
+
+- **Scenarios** — runs the 3 canonical scenarios, renders the results table and an
+  annotated price chart for each (T_event · T_efficient · equilibrium band).
+- **Playground** — sliders for event magnitude (σ) and adjustment speed (κ); the PAL
+  and classification update live as you drag.
+- **Stored events** — reads `pal_events` back from SQLite, proving persistence.
+
 ## The PAL definition (pinned here, not left as a dangling reference)
 
 | Term | Definition |
@@ -82,14 +99,17 @@ med/
 │   └── sqlite_store.py  # pal_events table (Snowflake stand-in)
 ├── pipeline.py          # plain-Python orchestration (LangGraph is the v2 upgrade)
 └── demo.py              # `python -m med.demo`
+app.py                   # Streamlit demo entrypoint (streamlit run app.py)
+ui/
+└── charts.py            # Altair price-path chart (demo only, not in core package)
 ```
 
 ## What's deliberately out of scope for v0
 
 Kafka/Redpanda, Airflow/Databricks, Snowflake, the full cost-aware vectorbt backtest
-(§5), point-in-time vendor, LLM agents, and the Streamlit UI. Each maps to a later
-PRD milestone; the slice's job is to make PAL itself real and testable first
-(the PRD's own "metric first" publication order).
+(§5), the point-in-time vendor, LLM agents, the signal log, and the backtest equity
+curve. Each maps to a later PRD milestone; the slice's job is to make PAL itself
+real and testable first (the PRD's own "metric first" publication order).
 
 ## Next steps (the PRD ladder)
 

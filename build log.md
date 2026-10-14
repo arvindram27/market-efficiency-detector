@@ -11,7 +11,7 @@
 | Spec | PRD v3.0 — Business-Ready Revision (September 2026) |
 | Core metric | Price Adjustment Latency (PAL) = T_efficient − T_event |
 | Product | PAL-derived event-driven statistical arbitrage signal (paper-traded) |
-| Current status | **v0 vertical slice — complete & tested** |
+| Current status | **v0 vertical slice + Streamlit PAL explorer — complete & tested** |
 | Stack (current) | Python 3.11+ · numpy · pydantic · VADER · SQLite — free, offline, zero keys |
 | Repo | public, `market-efficiency-detector` |
 
@@ -19,7 +19,7 @@
 
 | Version | Theme | Exit criterion | Status |
 |---|---|---|---|
-| **v0 — Vertical slice** | Prove PAL computes **and discriminates** end-to-end | Demo + 23 tests green, on free/mock data | ✅ **Done (2026-10-15)** |
+| **v0 — Vertical slice** | Prove PAL computes **and discriminates** end-to-end | CLI demo + Streamlit PAL explorer + 25 tests green | ✅ **Done (2026-10-15)** |
 | **v1 — Solo Analyst** | PAL on ~50 real NSE/SGX events; calibrate thresholds | Finding published (Medium) | ⬜ pending |
 | **v2 — Dual-Agent Live** | LangGraph Statistician + Contextualist on a streaming bus | Live pipeline + Streamlit demo deployed | ⬜ pending |
 | **v2.5 — Signal Layer** | Cost-aware, validated signal (entry/exit/sizing) | Backtest of record + kill criteria evaluated | ⬜ pending |
@@ -30,6 +30,7 @@
 | Date | Milestone | What changed | Status |
 |---|---|---|---|
 | 2026-10-15 | v0 vertical slice | Created `med/` package: synthetic data generator, Statistician, Contextualist, Decision Maker, SQLite store, pipeline, CLI demo; 23 tests; README + non-advice disclaimer | ✅ |
+| 2026-10-15 | Streamlit PAL explorer | Added `app.py` + `ui/charts.py` (Altair): scenarios, interactive playground, and stored-events views; `streamlit` added as a `demo` extra | ✅ |
 
 ## What v0 proves (and what it doesn't)
 
@@ -65,17 +66,22 @@ anything after transaction costs. Those are v1 and v2.5 respectively — deliber
 pip install -e ".[dev]"      # core + pytest
 python -m med.demo           # end-to-end PAL report (3 synthetic scenarios)
 pytest                       # 23 tests
+
+# Web demo
+pip install -e ".[demo]"     # adds streamlit
+streamlit run app.py         # PAL explorer (scenarios / playground / stored events)
 ```
 
 ## Test results (2026-10-15)
 
 ```
-23 passed in ~0.5s
+25 passed
 - test_contextualist   (7): taxonomy, news_weight, sentiment sign
 - test_decision_maker  (5): trigger gate + suppression reasons
 - test_pipeline        (4): PAL discrimination, INCONCLUSIVE, provenance, determinism
 - test_statistician    (6): sigma, z-score, equilibrium, T_efficient (incl. cap path)
 - test_storage         (1): SQLite round-trip
+- test_ui              (2): chart layer counts (skipped without the demo extra)
 ```
 
 ## Next concrete steps
@@ -84,7 +90,7 @@ pytest                       # 23 tests
    (`med/data/yfinance_source.py` is already written, needs a live run + calibration);
    collect ~50 events; publish the finding.
 2. **v2** — swap `med/pipeline.py` for a LangGraph graph (Statistician ∥ Contextualist →
-   Decision Maker); add a streaming bus and a Streamlit PAL explorer.
+   Decision Maker); add a streaming bus and wire the existing Streamlit explorer to it.
 3. **v2.5** — Signal Generator node + `trade-signals` topic; cost model + vectorbt backtest;
    write kill criteria (§5.5) to the repo *before* running the sweep.
 

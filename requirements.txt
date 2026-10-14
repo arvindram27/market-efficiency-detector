@@ -1,0 +1,7 @@
+# Core (free, offline — no keys required)
+numpy>=1.26
+pydantic>=2.5
+vaderSentiment>=3.3.2
+
+# Optional: real intraday market data (free, no key). Pulls pandas.
+# Install for the live NSE/SGX path: pip install yfinance>=0.2.40

@@ -31,6 +31,7 @@
 |---|---|---|---|
 | 2026-10-15 | v0 vertical slice | Created `med/` package: synthetic data generator, Statistician, Contextualist, Decision Maker, SQLite store, pipeline, CLI demo; 23 tests; README + non-advice disclaimer | ✅ |
 | 2026-10-15 | Streamlit PAL explorer | Added `app.py` + `ui/charts.py` (Altair): scenarios, interactive playground, and stored-events views; `streamlit` added as a `demo` extra | ✅ |
+| 2026-10-15 | Streamlit screenshots | Captured all 3 tabs into `docs/screenshots/` and embedded them in the README | ✅ |
 
 ## What v0 proves (and what it doesn't)
 

@@ -66,6 +66,18 @@ Three views:
   and classification update live as you drag.
 - **Stored events** — reads `pal_events` back from SQLite, proving persistence.
 
+**Scenarios** — results table + annotated price paths (T_event · T_efficient · equilibrium band):
+
+![Scenarios tab](docs/screenshots/scenarios.png)
+
+**Playground** — live PAL as you drag the sliders:
+
+![Playground tab](docs/screenshots/playground.png)
+
+**Stored events** — persisted rows from SQLite:
+
+![Stored events tab](docs/screenshots/stored_events.png)
+
 ## The PAL definition (pinned here, not left as a dangling reference)
 
 | Term | Definition |

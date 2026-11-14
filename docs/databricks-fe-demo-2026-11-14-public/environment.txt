@@ -1,0 +1,21 @@
+Databricks Free Edition demo - environment record (2026-11-14)
+
+Serverless environment: Standard v2 / Python 3.11.
+Observed at runtime: python 3.11.10, spark 4.2.0, pandas 1.5.3, pyarrow 14.0.1, TZ=UTC.
+
+Dependencies declared via the Environment side pane:
+  numpy>=1.26,<1.28
+  pydantic>=2.5,<3
+  vaderSentiment>=3.3.2
+Resolved install completed with zero resolver conflicts (numpy resolved to 1.26.4).
+No pip install of requirements-spark.txt was run on Databricks; that file targets the local setup.
+pandas, pyarrow, databricks-connect and scipy were already present in the serverless environment.
+
+Access: Databricks Free Edition account, browser-only (no local installs).
+
+Correctness notes (honest scope):
+- 3 synthetic events; demo scale. Not scale/production proof; not real-market validation of PAL.
+- Inline notebook asserts (mirroring tests_spark asserts), not a pytest run inside Databricks.
+- Parity is internal to each environment: the Databricks environment (above) differs from the local pins (pyspark==4.2.0, delta-spark==4.4.1, pandas==2.3.3, pyarrow==26.0.1). No cross-environment compatibility is claimed.
+- The naive Delta append duplicates records: a second save of the same 3 events took the table from 3 to 6 rows (not idempotent).
+- An earlier declared numpy range (>=1.26,<3) resolved to numpy 2.4.6 and the resolver reported conflicts with the environment's databricks-connect 15.4.26 (requires <2) and scipy 1.11.1 (requires <1.28). The declared range was tightened to <1.28; the install then resolved cleanly and the run passed.

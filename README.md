@@ -137,3 +137,9 @@ credentials exist anywhere in this codebase. Past simulated performance is not
 indicative of future results, and nothing here is investment advice. If this ever
 moves toward third-party distribution or live capital, obtain professional advice
 on SEBI (India) and MAS (Singapore) requirements first.
+
+### Databricks Free Edition demo (2026-11-14, demo-only)
+
+The `med_spark` extension ran end-to-end on Databricks Free Edition (serverless notebook): the declared dependencies resolved cleanly and a single Run all passed every inline check (7 parity + raise lines, Delta round-trip with all 16 PAL fields, then a second save of the same 3 events taking the table to 6 rows). Evidence: `docs/databricks-fe-demo-2026-11-14-public/` (identifier-sanitized copy of the archival reconstruction, stdout, and environment record; not executed after redaction).
+
+Honest scope: inline notebook asserts (not a pytest run in Databricks); 3 synthetic events at demo scale - not scale/production proof, not real-market validation of PAL; the naive append duplicates records (not idempotent); package versions differ between the local pins and the Databricks environment; no cross-environment compatibility is claimed.

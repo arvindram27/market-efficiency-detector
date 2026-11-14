@@ -1,0 +1,83 @@
+MED PAL-on-Spark - Databricks Free Edition demo outputs (identifier-redacted capture)
+Notebook: pal-dbx-fe-demo (notebook id redacted)
+Workspace: <databricks-workspace-url> (workspace URL and org id redacted)
+Run: 2026-11-14 ~19:57 IST (14:27 UTC). UI status: "Finished running 5 cells: 5 succeeded".
+Provenance: the original archival capture was verbatim from the rendered notebook DOM
+(Databricks UI export download was unavailable in the capturing environment; the REST export
+API needs a personal access token), and its source cells were byte-identical to the imported
+notebook source. This public copy redacts identifiers only (email path, workspace URL/org id,
+notebook id) and was not executed afterward; every result line and number is unchanged.
+
+=== CELL 2 (extract bundle from UC volume) ===
+catalogs: ['samples', 'system', 'workspace']
+bundle zip: /Volumes/workspace/default/med_pal_bundle/1-bundle.zip
+     611  pyproject.toml
+     789  requirements-spark.txt
+     377  requirements.txt
+    2268  med_spark/README.md
+     365  med_spark/__init__.py
+    9851  med_spark/batch.py
+    1871  med_spark/delta_store.py
+    4254  med_spark/demo_batch.py
+      61  tests_spark/__init__.py
+     340  tests_spark/conftest.py
+    6785  tests_spark/test_batch_spark.py
+     943  med/__init__.py
+    2459  med/config.py
+    1995  med/demo.py
+    3690  med/pipeline.py
+     529  med/provenance.py
+    2717  med/types.py
+      57  med/storage/__init__.py
+    4422  med/storage/sqlite_store.py
+      47  med/data/__init__.py
+    4739  med/data/synthetic.py
+    2038  med/data/yfinance_source.py
+      64  med/agents/__init__.py
+    2809  med/agents/contextualist.py
+    1916  med/agents/decision_maker.py
+    4159  med/agents/statistician.py
+      47  tests/__init__.py
+     340  tests/conftest.py
+    1178  tests/test_contextualist.py
+    1509  tests/test_decision_maker.py
+    2403  tests/test_pipeline.py
+    2073  tests/test_statistician.py
+    1253  tests/test_storage.py
+    1549  tests/test_ui.py
+extracted 34 files to /Workspace/Users/<databricks-user>/med-pal
+
+=== CELL 3 (versions) ===
+python: 3.11.10
+spark: 4.2.0
+pandas: 1.5.3
+pyarrow: 14.0.1
+session tz: UTC
+
+=== CELL 4 (parity vs v0 baseline + validation-raise checks) ===
+PASS parity[fast]  event_id=fast-1 class=FAST pal_seconds=120.0
+PASS parity[slow]  event_id=slow-2 class=SLOW pal_seconds=2580.0
+PASS parity[no_event]  event_id=no_event-3 class=INCONCLUSIVE pal_seconds=0.0
+PASS raise[duplicate_event_id] (duplicate event_id)
+PASS raise[two_events_one_scenario] (more than one event row)
+PASS raise[bars_only_scenario] (scenario sets differ)
+PASS raise[null_event_id] (null scenario/event_id/ts_published)
+
+=== CELL 5 (Delta round-trip + append on UC volume) ===
+catalogs: ['samples', 'system', 'workspace']
+delta base path: /Volumes/workspace/default/med_pal_delta/pal_events
+PASS delta round-trip (16 contract fields x 3 rows)
+PASS delta append (count=6)
++----------+------+----+-------------------+-------------------+-----------+------------+--------------------+---------------------+------------------+---------------+----------+-----------+--------------+--------------+-------+--------------------------+
+|event_id  |ticker|tier|t_event            |t_efficient        |pal_seconds|pal_class   |z_score             |sigma_pre            |equilibrium_price |sentiment_score|event_type|news_weight|data_vintage  |generator_seed|git_sha|created_at                |
++----------+------+----+-------------------+-------------------+-----------+------------+--------------------+---------------------+------------------+---------------+----------+-----------+--------------+--------------+-------+--------------------------+
+|slow-2    |ACME  |MID |2026-01-05 10:15:00|2026-01-05 10:58:00|2580.0     |SLOW        |2.46522900818897    |0.0015211568529914388|101.31171640534478|0.0            |M&A       |HIGH       |synthetic-v0.1|2             |NULL   |2026-11-14 14:27:49.27255 |
+|no_event-3|ACME  |MID |2026-01-05 10:15:00|2026-01-05 10:15:00|0.0        |INCONCLUSIVE|-0.16472759605834278|0.001582859103169579 |99.87926488350197 |0.4404         |EARNINGS  |HIGH       |synthetic-v0.1|3             |NULL   |2026-11-14 14:27:49.27255 |
+|fast-1    |ACME  |MID |2026-01-05 10:15:00|2026-01-05 10:17:00|120.0      |FAST        |2.8522561597963576  |0.001314748672597372 |100.16420600002004|0.4404         |EARNINGS  |HIGH       |synthetic-v0.1|1             |NULL   |2026-11-14 14:27:49.27255 |
+|no_event-3|ACME  |MID |2026-01-05 10:15:00|2026-01-05 10:15:00|0.0        |INCONCLUSIVE|-0.16472759605834278|0.001582859103169579 |99.87926488350197 |0.4404         |EARNINGS  |HIGH       |synthetic-v0.1|3             |NULL   |2026-11-14 14:27:58.523167|
+|fast-1    |ACME  |MID |2026-01-05 10:15:00|2026-01-05 10:17:00|120.0      |FAST        |2.8522561597963576  |0.001314748672597372 |100.16420600002004|0.4404         |EARNINGS  |HIGH       |synthetic-v0.1|1             |NULL   |2026-11-14 14:27:58.523167|
+|slow-2    |ACME  |MID |2026-01-05 10:15:00|2026-01-05 10:58:00|2580.0     |SLOW        |2.46522900818897    |0.0015211568529914388|101.31171640534478|0.0            |M&A       |HIGH       |synthetic-v0.1|2             |NULL   |2026-11-14 14:27:58.523167|
++----------+------+----+-------------------+-------------------+-----------+------------+--------------------+---------------------+------------------+---------------+----------+-----------+--------------+--------------+-------+--------------------------+
+
+=== CELL 6 (done marker) ===
+DBX-FE-DEMO-DONE

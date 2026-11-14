@@ -1,0 +1,15 @@
+# Additive PAL-on-Spark extension requirements. The v0 project needs none of these.
+# Java 17+ is required to run PySpark 4.x.
+pyspark==4.2.0
+# delta-spark 4.4.1 declares pyspark>=4.0.1,<=4.2.0.
+delta-spark==4.4.1
+# pandas/pyarrow floors are pyspark 4.2.0's own `sql` extra requirements.
+# pandas is capped and locked: PySpark 4.2.0 warns it does not yet fully
+# support pandas >= 3.0.0 (FutureWarning observed in the P4 run); 2.3.3 is
+# the locked release - verified on PyPI (pypi.org/project/pandas/2.3.3/)
+# with a cp313 manylinux wheel
+# (pandas-2.3.3-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl),
+# satisfying the pyspark sql-extra floor pandas>=2.2.0 and its <3.0.0 bound.
+pandas==2.3.3
+# pyarrow locked to the version observed working in the P4 run.
+pyarrow==26.0.1

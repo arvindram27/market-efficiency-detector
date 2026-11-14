@@ -1,145 +1,57 @@
-# Market Efficiency Detector (MED) — Price Adjustment Latency
+<p align="center">
+  <img src="docs/assets/med-logo.png" alt="MED silver and graphite 3D title" width="420" />
+</p>
 
-A runnable **vertical slice** of the [MED PRD v3.0](docs/MED_PRD_v3_0_Business_Ready.docx):
-prove the core metric — **Price Adjustment Latency (PAL = T_efficient − T_event)** —
-computes end-to-end on free, deterministic data, and that it *discriminates*
-fast from slow price adjustment.
+<h1 align="center">Market Efficiency Detector</h1>
 
-> **Status:** v0 vertical slice. Measurement-only (no live capital, no signal
-> execution). This is the PRD v1 "Solo Analyst" core, compressed to a key-free demo.
-> Full progress + decisions: [`build log.md`](build log.md).
+<p align="center">A research project on price adjustment after news</p>
 
-## The claim
+MED started as a small Price Adjustment Latency demo. It now includes a separate timing study with clearer candle boundaries and explicit gaps in the data.
 
-For a defined equity universe, some information events produce a price path that is
-slow and directional enough to be measurable. This slice detects an event, tracks the
-price until it reaches and holds an equilibrium band, and emits a
-**FAST / NORMAL / SLOW / INCONCLUSIVE** classification with full provenance.
+This is a research prototype. It is not a validated market efficiency detector or a trading system.
 
-## Quickstart
+## Two separate paths
 
-Requires Python 3.11+.
+**Legacy PAL demo**
 
-```bash
-python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# macOS / Linux:
-source .venv/bin/activate
+`med/` calculates Price Adjustment Latency and stores results in SQLite. `med_spark/` is its Spark extension. The Streamlit app explores synthetic scenarios.
 
-pip install -e ".[dev]"        # core + pytest  (add [live] for yfinance)
+**mt1 timing study**
 
-# Run the demo (end-to-end PAL on 3 synthetic scenarios):
+[`research/mt1/`](research/mt1/README.md) uses complete candles over a fixed 90 minute window. The final 20 complete candles define a retrospective reference price.
+
+The price move trigger and the five candle stability rule have separate outcomes. Missing data stays visible. Unknown historical arrival times stay unknown.
+
+mt1 does not replace the legacy result fields. Its Spark adapter calls the same Python calculation rather than a second independent algorithm.
+
+## Try the synthetic example
+
+Using an existing Python 3.11 or newer environment
+
+```text
+cd research/mt1
+python -B synthetic_demo.py
+python -B -m unittest tests_timing.test_mt1 tests_spark_review.test_transport tests_spark_review.test_demo -v
+```
+
+No API key or market data is needed. The example makes its own candles in memory.
+
+The legacy demo remains available from the repository root with its dependencies installed
+
+```text
 python -m med.demo
-
-# Run the tests (prove discrimination: PAL(slow) > PAL(fast), no-event -> INCONCLUSIVE):
-pytest
 ```
 
-## What you'll see
+## What we checked
 
-```
-fast       EARNINGS    HIGH     2.51        2.3       FAST
-slow       M&A         HIGH     2.49       55.0       SLOW
-no_event   EARNINGS    HIGH     0.83         --       INCONCLUSIVE
-```
+- Synthetic tests cover boundaries and missing data
+- Local Spark checks preserve fields and nulls and timestamp strings
+- One private fixture passed through Spark with an exact Python result match
 
-`fast` and `slow` share the same instantaneous "surprise" (both trigger `|z| > 2.0`);
-they differ only in how long the *residual* adjustment takes. `no_event` has a
-qualifying headline but no price move, so the trigger gate suppresses it — the
-"news without price confirmation" null case.
+The Spark path shares the Python evaluator. These checks do not prove independent numerical correctness or scale or market efficiency. The reference price is retrospective. Candle close times are not actual alert arrival times.
 
-## 🖥️ Streamlit demo (PAL explorer)
+[Method and verification](research/mt1/README.md) explain the scope and limits.
 
-An interactive web demo on the same `Pipeline` — no backend changes.
+## Data boundary
 
-```bash
-pip install -e ".[demo]"   # core + streamlit
-streamlit run app.py
-```
-
-Three views:
-
-- **Scenarios** — runs the 3 canonical scenarios, renders the results table and an
-  annotated price chart for each (T_event · T_efficient · equilibrium band).
-- **Playground** — sliders for event magnitude (σ) and adjustment speed (κ); the PAL
-  and classification update live as you drag.
-- **Stored events** — reads `pal_events` back from SQLite, proving persistence.
-
-**Scenarios** — results table + annotated price paths (T_event · T_efficient · equilibrium band):
-
-![Scenarios tab](docs/screenshots/scenarios.png)
-
-**Playground** — live PAL as you drag the sliders:
-
-![Playground tab](docs/screenshots/playground.png)
-
-**Stored events** — persisted rows from SQLite:
-
-![Stored events tab](docs/screenshots/stored_events.png)
-
-## The PAL definition (pinned here, not left as a dangling reference)
-
-| Term | Definition |
-|---|---|
-| **T_event** | `max(ts_published, ts_ingested)` of the news event (PRD §5.3) |
-| **Equilibrium** | Median close over the final 20 bars — the anchor for "efficient" |
-| **T_efficient** | First bar at/after T_event where close stays within `0.5 · σ_pre · equilibrium` for 5 consecutive bars |
-| **σ_pre** | Std of 1-bar log returns over the 60-bar lookback window |
-| **Trigger** | `news_weight = HIGH ∧ event_type ∈ {EARNINGS, MACRO, M&A} ∧ |z| > 2.0` within 300s |
-| **Class** | FAST ≤ 10 min, NORMAL ≤ 40 min, else SLOW; cap hit or gate fail → INCONCLUSIVE |
-
-> ⚠️ The band/classification thresholds are **placeholder defaults** and must be
-> calibrated on real NSE/SGX data in v1. The *algorithm* is the deliverable here,
-> not the specific numbers.
-
-## Project layout
-
-```
-med/
-├── config.py            # all thresholds in one place (pinned, documented)
-├── types.py             # pydantic models (PriceBar, NewsEvent, PALEvent, …)
-├── provenance.py        # git-sha stamping (PRD §10 reproducibility)
-├── data/
-│   ├── synthetic.py     # seeded price/event generator (free "mock" path)
-│   └── yfinance_source.py  # optional real NSE/SGX intraday (free, no key)
-├── agents/
-│   ├── statistician.py  # sigma, z-score, equilibrium, T_efficient (no LLM)
-│   ├── contextualist.py # VADER sentiment + event taxonomy + news_weight
-│   └── decision_maker.py# trigger gate + PAL classification
-├── storage/
-│   └── sqlite_store.py  # pal_events table (Snowflake stand-in)
-├── pipeline.py          # plain-Python orchestration (LangGraph is the v2 upgrade)
-└── demo.py              # `python -m med.demo`
-app.py                   # Streamlit demo entrypoint (streamlit run app.py)
-ui/
-└── charts.py            # Altair price-path chart (demo only, not in core package)
-```
-
-## What's deliberately out of scope for v0
-
-Kafka/Redpanda, Airflow/Databricks, Snowflake, the full cost-aware vectorbt backtest
-(§5), the point-in-time vendor, LLM agents, the signal log, and the backtest equity
-curve. Each maps to a later PRD milestone; the slice's job is to make PAL itself
-real and testable first (the PRD's own "metric first" publication order).
-
-## Next steps (the PRD ladder)
-
-1. **v1** — run PAL across ~50 real NSE/SGX events (yfinance/RSS), calibrate thresholds, publish the finding.
-2. **v2** — swap `pipeline.py` for a LangGraph Statistician + Contextualist graph on a streaming bus.
-3. **v2.5** — Signal Generator node, `trade-signals` topic, cost-aware vectorbt backtest, kill criteria.
-4. **v3** — Forecaster, SHAP, RAG, Airflow research plane at full scope.
-
----
-
-**DISCLAIMER:** research prototype only. All signals are paper-traded; no broker
-credentials exist anywhere in this codebase. Past simulated performance is not
-indicative of future results, and nothing here is investment advice. If this ever
-moves toward third-party distribution or live capital, obtain professional advice
-on SEBI (India) and MAS (Singapore) requirements first.
-
-### Databricks Free Edition demo (2026-11-14, demo-only)
-
-The `med_spark` extension ran end-to-end on Databricks Free Edition (serverless notebook): the declared dependencies resolved cleanly and a single Run all passed every inline check (7 parity + raise lines, Delta round-trip with all 16 PAL fields, then a second save of the same 3 events taking the table to 6 rows). Evidence: `docs/databricks-fe-demo-2026-11-14-public/` (identifier-sanitized copy of the archival reconstruction, stdout, and environment record; not executed after redaction).
-
-Honest scope: inline notebook asserts (not a pytest run in Databricks); 3 synthetic events at demo scale - not scale/production proof, not real-market validation of PAL; the naive append duplicates records (not idempotent); package versions differ between the local pins and the Databricks environment; no cross-environment compatibility is claimed.
+Only synthetic examples are included for mt1. Provider data and derived private results are excluded. Nothing here is investment advice.

@@ -1,0 +1,78 @@
+{
+  "README.md": {
+    "bytes": 4799,
+    "sha256": "a1fa32fef21ff0069a3674b2b302ec6b2b7ff5748831db61c480d528f163633c"
+  },
+  "docs/limits.md": {
+    "bytes": 2650,
+    "sha256": "71c85a55d97f0cfc86e7096dd57b74023733b6d169e419d4cf2f8a73fe739c80"
+  },
+  "docs/method.md": {
+    "bytes": 4290,
+    "sha256": "b2b6958e10574e695dfaefd0f9104f2cfd8ca8ec8c9caa0e994c0778f448d18e"
+  },
+  "docs/verification.md": {
+    "bytes": 2812,
+    "sha256": "91276821491d225ea5a5d0ec5eb398a48aab6a0aa9fb71c7b47ed38692542044"
+  },
+  "med_timing/__init__.py": {
+    "bytes": 176,
+    "sha256": "c5817c309216e78c53dee599e9db4899ee2469b29cc0b184645589830b5e364c"
+  },
+  "med_timing/contracts.py": {
+    "bytes": 1884,
+    "sha256": "62d9f6c3f7d026eec061e082bbc26ea14dee3cfc1894c48ee5702d662849cac2"
+  },
+  "med_timing/retrospective.py": {
+    "bytes": 7151,
+    "sha256": "5839c34ed742f12b73e7434d27e4cbe9a62f1e6a39c28e2d8ac4e606ca736c2b"
+  },
+  "med_timing/validation.py": {
+    "bytes": 5862,
+    "sha256": "17b998bd0f8af13ea320af21bd40e2aeb2c6a6a98ab9525b5245686222f8fd44"
+  },
+  "med_timing_spark/__init__.py": {
+    "bytes": 221,
+    "sha256": "59693d7495c1c365d84d4b2d8e87daeb39c939b9757360eb357ef6c071860510"
+  },
+  "med_timing_spark/adapter.py": {
+    "bytes": 5897,
+    "sha256": "669eb3c4e30cb6766aa07fcf2ae24da3ce194c825a4a057ab411b976052e86c8"
+  },
+  "med_timing_spark/schema.py": {
+    "bytes": 3239,
+    "sha256": "fcc010e74422e132e2fcbb97f6c77c752368d721ea3e8f86ba8090c8e9bfefb5"
+  },
+  "synthetic_demo.py": {
+    "bytes": 2415,
+    "sha256": "3477a56ab58619dc7dc9413316ba9567b2520fadaa87e3c56b520dbe9f408000"
+  },
+  "tests_spark_review/__init__.py": {
+    "bytes": 79,
+    "sha256": "df4430a30f3615b9a382f49cd1f759fa3adcb7110db59a264892206f0f2c6b23"
+  },
+  "tests_spark_review/cases.py": {
+    "bytes": 1785,
+    "sha256": "5a8f00294f2f1343bdaced258a5312b87bde6c2f42f7e78c840f140f094c8fcf"
+  },
+  "tests_spark_review/integration_spark.py": {
+    "bytes": 3553,
+    "sha256": "bf62cc02069c8d7f562cdc2681f65a0a449809ad5a74f7d1cf49171ecefb52bd"
+  },
+  "tests_spark_review/test_demo.py": {
+    "bytes": 1662,
+    "sha256": "f246e370b8ba54c785aad79dd19ffe4cb21b4fb6423a6ef59a1f045d59d94121"
+  },
+  "tests_spark_review/test_transport.py": {
+    "bytes": 4620,
+    "sha256": "abb30ba1969c453793285224e847e9eed7d106943341d6f3184fc06af65b0938"
+  },
+  "tests_timing/__init__.py": {
+    "bytes": 47,
+    "sha256": "ad61e7d844a8c4ad4a740984b3f85d1c321abf69874c81bd3192ff2b08f6e03a"
+  },
+  "tests_timing/test_mt1.py": {
+    "bytes": 13861,
+    "sha256": "291e29d00aa75acf97488d3574dfd7c67586bb95f9b87306b48934e3cea75644"
+  }
+}
